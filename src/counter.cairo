@@ -70,3 +70,30 @@ mod CounterContract {
         }
     }
 }
+
+#[cfg(test)]
+mod unit_test {
+
+    use starknet::{ContractAddress};
+    use starknet::syscalls::{deploy_syscall};
+    use super::CounterContract;
+    use workshop::counter::{ICounterContractDispatcher, ICounterContractDispatcherTrait};
+
+    #[test]
+    #[ignore]
+    // #[available_gas(500000)]
+    fn test_constructor(){
+        // create the constructor args
+        let initial_counter : u32 = 42;
+        let owner : ContractAddress = 'owner'.try_into().unwrap();
+
+        let mut calldata = array![initial_counter.into(), owner.into()];
+
+        // deploy
+        let (contract_address, _) = deploy_syscall(CounterContract::TEST_CLASS_HASH.try_into().unwrap(), 0, calldata.span(), false).unwrap();
+        let dispatcher = ICounterContractDispatcher { contract_address };
+
+        // check
+        assert(initial_counter == dispatcher.get_counter(), 'Counter mismatch');
+    }
+}

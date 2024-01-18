@@ -18,3 +18,4 @@ sierra = true
 url = ""
 
 [scripts]
+test = "snforge test"
